@@ -1,0 +1,93 @@
+{
+  "announcementId": 2026101,
+  "announcementName": "2026년도 신혼부부/청년 공공임대 통합공고",
+  "rules": [
+    {
+      "ruleName": "주택 소유 여부 검증",
+      "field": "user.isHomeOwner",
+      "operator": "EQUAL",
+      "value": "false",
+      "isMandatory": true,
+      "description": "신청자 및 세대구성원 전원 무주택이어야 함"
+    },
+    {
+      "ruleName": "과거 주택 처분 이력 체크",
+      "field": "user.hasPastHomeOwnership",
+      "operator": "EQUAL",
+      "value": "false",
+      "isMandatory": false,
+      "description": "감점 또는 순위 제한 요소로 활용"
+    },
+    {
+      "ruleName": "신청자 연령 검증 (청년 기준 예시)",
+      "field": "user.age",
+      "operator": "BETWEEN",
+      "value": "[19, 39]",
+      "isMandatory": true,
+      "description": "만 19세 이상 만 39세 이하"
+    },
+    {
+      "ruleName": "연속 거주기간 확인 (서울 거주 예시)",
+      "field": "user.residence",
+      "operator": "EQUAL",
+      "value": "서울",
+      "isMandatory": true
+    },
+    {
+      "ruleName": "신혼부부 혼인 기간 검증",
+      "field": "user.marriageDurationYears",
+      "operator": "LTE",
+      "value": "7.0",
+      "isMandatory": false,
+      "description": "혼인신고일 기준 7년 이내 (6세 이하 자녀 있을 시 예외 처리는 FACT단에서 계산)"
+    },
+    {
+      "ruleName": "월평균 소득 기준액 검증",
+      "field": "user.incomePercent",
+      "operator": "LTE",
+      "value": "120",
+      "isMandatory": true,
+      "description": "전년도 도시근로자 가구원수별 월평균 소득 기준 120% 이하"
+    },
+    {
+      "ruleName": "총자산 제한 기준 검증",
+      "field": "user.totalAsset",
+      "operator": "LTE",
+      "value": "345000000",
+      "isMandatory": true,
+      "description": "부동산+자동차+금융+기타 - 부채 합산액이 3억 4,500만 원 이하"
+    },
+    {
+      "ruleName": "자동차 가액 제한 검증",
+      "field": "user.carValue",
+      "operator": "LTE",
+      "value": "37080000",
+      "isMandatory": true,
+      "description": "보건복지부 장관이 정하는 차량기준가액 제한"
+    },
+    {
+      "ruleName": "청약통장 최소 납입 횟수",
+      "field": "user.subscriptionCount",
+      "operator": "GTE",
+      "value": "6",
+      "isMandatory": false,
+      "description": "청약통장 가입 후 6회 이상 납입 여부"
+    },
+    {
+      "ruleName": "우선공급 대상자 필터링",
+      "field": "user.specialQualifications",
+      "operator": "CONTAINS_ANY",
+      "value": "['사회취약계층', '주거약자', '주거급여수급자', '중소기업근로자', '장애인']",
+      "isMandatory": false,
+      "description": "우선공급 대상 항목 중 하나라도 해당되는지 체크"
+    },
+    {
+      "ruleName": "과거 공공임대 계약 이력 감점 체크",
+      "field": "user.pastContractHistory",
+      "operator": "NOT_EQUAL",
+      "value": "WITHIN_3_YEARS",
+      "isMandatory": false,
+      "description": "최근 3년 이내 계약 이력이 있으면 감점 처리하기 위한 룰"
+    }
+  ]
+}
