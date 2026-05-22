@@ -292,4 +292,5 @@ public class RuleService {
             return "\"" + val.replace("\"", "\\\"") + "\"";
         }
     }
+
 }

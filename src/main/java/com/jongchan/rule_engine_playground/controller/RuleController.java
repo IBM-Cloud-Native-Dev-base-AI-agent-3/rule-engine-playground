@@ -50,48 +50,21 @@ public class RuleController {
 
 
     /**
-     * 특정 공고 ID에 대하여 DB에 정의된 규칙들로 실시간 평가를 수행합니다.
+     * 특정 공고 ID에 대하여 DTO 매개변수로 하나씩 전달받은 신청자 정보로 실시간 자격 평가를 수행합니다.
      */
     @PostMapping("/evaluate/{announcementId}")
     public ResponseEntity<?> evaluateRules(
             @PathVariable("announcementId") Long announcementId,
-            @RequestBody Map<String, Object> inputFacts) {
+            @RequestBody com.jongchan.rule_engine_playground.dto.RentalHomeEvaluationRequestDto evaluationRequest) {
         try {
-            // 중첩 구조의 맵 데이터 타입을 재귀적으로 정제하여 MVEL 비교 연산 오류 차단
-            sanitizeInputFacts(inputFacts);
+            // DTO가 제공하는 중첩 구조의 Facts Map 포맷으로 자동 변환합니다.
+            // DTO를 활용하므로 더 이상 복잡한 타입 정제 헬퍼가 필요치 않아 코드가 매우 명료해집니다.
+            Map<String, Object> factsMap = evaluationRequest.toFactsMap();
             
-            Map<String, Object> evaluationResult = ruleService.evaluate(announcementId, inputFacts);
+            Map<String, Object> evaluationResult = ruleService.evaluate(announcementId, factsMap);
             return ResponseEntity.ok(evaluationResult);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-    }
-
-    /**
-     * 요청 정보의 문자열 숫자, 불리언을 실제 타입으로 재귀적으로 정제하는 유틸리티
-     */
-    @SuppressWarnings("unchecked")
-    private void sanitizeInputFacts(Map<String, Object> map) {
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            Object val = entry.getValue();
-            if (val instanceof Map) {
-                sanitizeInputFacts((Map<String, Object>) val);
-            } else if (val instanceof String) {
-                String str = ((String) val).trim();
-                if ("true".equalsIgnoreCase(str)) {
-                    entry.setValue(true);
-                } else if ("false".equalsIgnoreCase(str)) {
-                    entry.setValue(false);
-                } else {
-                    try {
-                        if (str.contains(".")) {
-                            entry.setValue(Double.parseDouble(str));
-                        } else {
-                            entry.setValue(Integer.parseInt(str));
-                        }
-                    } catch (NumberFormatException ignored) {}
-                }
-            }
         }
     }
 }
