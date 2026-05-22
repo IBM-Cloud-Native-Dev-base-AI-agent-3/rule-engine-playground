@@ -55,13 +55,12 @@ public class RuleController {
     @PostMapping("/evaluate/{announcementId}")
     public ResponseEntity<?> evaluateRules(
             @PathVariable("announcementId") Long announcementId,
-            @RequestBody com.jongchan.rule_engine_playground.dto.RentalHomeEvaluationRequestDto evaluationRequest) {
+            @RequestBody com.jongchan.rule_engine_playground.dto.RentalHomeRequestDto evaluationRequest) {
         try {
             // DTO가 제공하는 중첩 구조의 Facts Map 포맷으로 자동 변환합니다.
-            // DTO를 활용하므로 더 이상 복잡한 타입 정제 헬퍼가 필요치 않아 코드가 매우 명료해집니다.
             Map<String, Object> factsMap = evaluationRequest.toFactsMap();
             
-            Map<String, Object> evaluationResult = ruleService.evaluate(announcementId, factsMap);
+            com.jongchan.rule_engine_playground.dto.RentalHomeResponseDto evaluationResult = ruleService.evaluate(announcementId, factsMap);
             return ResponseEntity.ok(evaluationResult);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

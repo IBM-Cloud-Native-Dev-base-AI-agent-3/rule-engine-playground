@@ -11,12 +11,9 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RentalHomeAlertRequestDto {
+public class RentalHomeRequestDto {
 
-    // 알림 대상 수신용 식별 정보
-    private String email;
-
-    // 룰 검증용 신청자 자격 정보 (Flat 구조로 프론트엔드 통신 편의성 극대화)
+    // 11가지 신청자 청약 자격 정보 (Flat 구조로 프론트엔드가 개별 매개변수 형태로 입력하기 최적화)
     private Boolean isHomeOwner;
     private Boolean hasPastHomeOwnership;
     private Integer age;

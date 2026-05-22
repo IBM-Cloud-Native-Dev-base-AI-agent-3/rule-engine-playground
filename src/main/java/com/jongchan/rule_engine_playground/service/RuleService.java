@@ -29,7 +29,7 @@ public class RuleService {
     /**
      * DB에서 공고 ID로 규칙들을 조회하고, 입력받은 Facts(데이터)에 대해 청약 자격 룰엔진을 실행합니다.
      */
-    public Map<String, Object> evaluate(Long announcementId, Map<String, Object> inputFacts) {
+    public com.jongchan.rule_engine_playground.dto.RentalHomeResponseDto evaluate(Long announcementId, Map<String, Object> inputFacts) {
         try {
             // 1. DB에서 공고 마스터 및 규칙 조회
             Announcement announcement = announcementRepository.findById(announcementId)
@@ -123,17 +123,17 @@ public class RuleService {
             // 엔진 가동
             rulesEngine.fire(rules, facts);
 
-            // 결과 취합 반환
-            Map<String, Object> result = new HashMap<>();
-            result.put("announcementId", announcementId);
-            result.put("announcementName", announcement.getTitle());
-            result.put("isEligible", isEligible[0]);
-            result.put("passedRules", passedRules);
-            result.put("failedMandatoryRules", failedMandatoryRules);
-            result.put("failedOptionalRules", failedOptionalRules);
-            result.put("inputFacts", inputFacts);
-
-            return result;
+            // 결과 DTO 조립하여 반환
+            return com.jongchan.rule_engine_playground.dto.RentalHomeResponseDto.builder()
+                    .announcementId(announcementId)
+                    .announcementName(announcement.getTitle())
+                    .isEligible(isEligible[0])
+                    .passedRules(passedRules)
+                    .failedMandatoryRules(failedMandatoryRules)
+                    .failedOptionalRules(failedOptionalRules)
+                    .inputFacts(inputFacts)
+                    .aiPredictionRate(null) // 향후 FastAPI 예측 연동 시 수치 입력 예정
+                    .build();
 
         } catch (Exception e) {
             throw new RuntimeException("DB 기반 룰 평가 수행 중 에러 발생: " + e.getMessage(), e);
